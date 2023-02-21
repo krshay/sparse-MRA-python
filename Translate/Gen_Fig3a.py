@@ -1,9 +1,10 @@
 import numpy as np
 import cvxpy as cp
 from scipy.linalg import dft, eig
-from scipy.io import savemat
+from scipy.io import loadmat, savemat
 from utils_fig_3 import compute_error
 import warnings
+import os
 
 warnings.filterwarnings("ignore")
 
@@ -14,18 +15,36 @@ np.random.seed(rand_seed)
 # Parameters
 N_vec = np.arange(start=10, stop=81, step=5)  # signal's length
 K_vec = np.arange(start=2, stop=21, step=2)  # sparsity
-max_iter = 10  # number of trials per (N,K)
-
-# Main Loop
+max_iter = 25  # number of trials per (N,K)
 sdp_err = np.zeros((len(N_vec), len(K_vec), max_iter))
 X_rank = np.zeros((len(N_vec), len(K_vec), max_iter))
 
+n_start = 0
+K_start = 1
+iter_num_start = 0
+parameters_dict = {}
+
+parameters_path = 'fig3_a_paramrters.mat'
+if os.path.exists(parameters_path):
+    parameters_dict = loadmat(parameters_path)
+    n_start = parameters_dict['n'][0]
+    K_start = parameters_dict['K'][0]
+    iter_num_start = parameters_dict['iter_num'][0]
+    sdp_err = parameters_dict['sdp_err']
+
+
+# Main Loop
 for n in np.arange(len(N_vec)):
+    parameters_dict['n'] = n
     N = N_vec[n]
     F = dft(N)
 
     for K in np.arange(1, len(K_vec) + 1):
-        for _iter in np.arange(max_iter):
+        parameters_dict['K'] = K
+        for iter_num in np.arange(max_iter):
+            if (n <= n_start) and (K <= K_start) and (iter_num <= iter_num_start):
+                continue
+            parameters_dict['iter_num'] = iter_num
             # geenrating a binary signal
             ind_true = np.random.permutation(N)
 
@@ -69,7 +88,7 @@ for n in np.arange(len(N_vec)):
                 if not Problem.solution.status == 'infeasible':
                     break
             if Problem.solution.status == 'infeasible':
-                sdp_err[n, K - 1, _iter] = np.nan
+                sdp_err[n, K - 1, iter_num] = np.nan
 
             else:
                 # extracting the leading eigenvector:
@@ -78,11 +97,13 @@ for n in np.arange(len(N_vec)):
                 x_est = eig_vec[:, ind_max].real
                 x_est = np.sqrt(eig_val[ind_max].real) * x_est
 
-                X_rank[n, K - 1, _iter] = np.linalg.matrix_rank(X, 1e-4)
+                X_rank[n, K - 1, iter_num] = np.linalg.matrix_rank(X, 1e-4)
 
                 x_est = np.round(x_est)
-                sdp_err[n, K - 1, _iter] = compute_error(x_est, x_true)
+                sdp_err[n, K - 1, iter_num] = compute_error(x_est, x_true)
+                parameters_dict['sdp_err'] = sdp_err
 
-            print(f"N = {N}, K = {K}, iter = {_iter}")
-            print(f"error = {sdp_err[n, K - 1, _iter]:.3e}")
-            savemat('sdp_err.mat', {'sdp_err': sdp_err})
+            print(f"N = {N}, K = {K}, iter = {iter_num}")
+            print(f"error = {sdp_err[n, K - 1, iter_num]:.3e}")
+
+            savemat(parameters_path, parameters_dict)

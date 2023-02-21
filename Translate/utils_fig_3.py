@@ -4,6 +4,7 @@ from scipy.linalg import dft, eigh, norm
 from numpy.fft import fft, ifft
 
 
+
 def compute_error(x_est, x_true):
     """
     this function computes the relative error with respect to dihedral group
