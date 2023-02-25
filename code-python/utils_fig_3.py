@@ -16,7 +16,7 @@ def compute_error(x_est, x_true):
     a2 = np.abs(ifft(X_true * X_est.conj(), axis=0))  # the reflected signal
     max_correlation = np.max([a1, a2])
     err = norm(x_est) ** 2 + norm(x_true) ** 2 - 2 * max_correlation
-    err = err / norm(x_true) ** 2  # relative error
+    err = np.abs(err / norm(x_true) ** 2)  # relative error
 
     return err
 
