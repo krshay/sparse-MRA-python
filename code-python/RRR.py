@@ -1,6 +1,4 @@
 import numpy as np
-import os, scipy
-
 
 def P1(x: np.ndarray, K):
     x1 = np.zeros_like(x)
@@ -34,7 +32,6 @@ def RRR(y: np.ndarray,
     last_iter = max_iter
 
     for _iter in range(max_iter):
-
         x1 = P1(x_est, K)
         x2 = P2(2 * x1 - x_est, y)
         x_est = x_est + beta * (x2 - x1)

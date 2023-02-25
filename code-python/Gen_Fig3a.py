@@ -8,8 +8,7 @@ import os
 
 warnings.filterwarnings("ignore")
 
-rand_seed = np.random.randint(10000)
-print(f'random seed: {rand_seed}')
+rand_seed = 1
 np.random.seed(rand_seed)
 
 # Parameters
@@ -45,7 +44,7 @@ for n in np.arange(len(N_vec)):
             if (n <= n_start) and (K <= K_start) and (iter_num <= iter_num_start):
                 continue
             parameters_dict['iter_num'] = iter_num
-            # geenrating a binary signal
+            # generating a binary signal
             ind_true = np.random.permutation(N)
 
             # ind_true_1 = first_iter['ind_true_1']

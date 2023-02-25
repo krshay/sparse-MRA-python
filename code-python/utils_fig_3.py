@@ -7,10 +7,9 @@ from numpy.fft import fft, ifft
 
 def compute_error(x_est, x_true):
     """
-    this function computes the relative error with respect to dihedral group
+    This function computes the relative error with respect to dihedral group
     (shifts + reflection) times Z_2 (sign change).
     """
-
     X_true = fft(x_true, axis=0)
     X_est = fft(x_est, axis=0)
     a1 = np.abs(ifft(X_true * X_est, axis=0))  # the abs values takes also the sign change into account
