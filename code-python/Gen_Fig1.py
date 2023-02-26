@@ -24,8 +24,6 @@ def RRR_loop(N):
 
     for m in range(len(M_vec)):
         M = M_vec[m]
-        print(f'M = {M:g} \n')
-
         for _iter in range(num_iter):
             ind_true = np.random.permutation(N)
             ind_true = ind_true[1:M]
@@ -36,8 +34,6 @@ def RRR_loop(N):
 
             x_init = np.random.randn(N, 1)
             x_est, error, diff, rrr_data[m, _iter] = RRR(np.sqrt(y), x_init, M, parameters)
-
-        print(f'M = {M:g} \n')
 
     return M_vec, rrr_data
 
