@@ -31,9 +31,9 @@ def compute_error(x_est, x_true):
 rand_seed = 1
 np.random.seed(rand_seed)
 
-Ls = [15]  # signals' length
-Ms = np.arange(2, 10) # sparsity
-max_iter = 10 # number of iterations
+Ls = [25]  # signals' length
+Ms = np.arange(2, 18, 2) # sparsity
+max_iter = 20 # number of iterations
 
 errs_MRA = np.zeros((len(Ls), len(Ms), max_iter))
 computation_times_MRA = np.zeros_like(errs_MRA)
